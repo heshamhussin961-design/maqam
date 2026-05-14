@@ -20,6 +20,12 @@
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div class="nav-right">
+    {% if session.get('user_id') %}
+    <a href="/my-orders" class="nav-icon">Orders</a>
+    <a href="/auth/logout" class="nav-icon">Logout</a>
+    {% else %}
+    <a href="/auth/login" class="nav-icon">Login</a>
+    {% endif %}
     <a href="javascript:void(0)" class="nav-icon" onclick="toggleWishlist()">Wishlist<span id="wish-count">0</span></a>
     <a href="javascript:void(0)" class="nav-icon" onclick="toggleCart()">Bag<span id="cart-count">0</span></a>
     <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
