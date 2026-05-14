@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block title %}MAQAM | Admin Dashboard{% endblock %}
+
+{% block head %}
+<style>
+    :root { --sidebar-w: 260px; }
+    body { background: #050505; color: #fff; cursor: default !important; }
+    .admin-layout { display: flex; min-height: 100vh; }
+    .sidebar { width: var(--sidebar-w); background: #0a0a0a; border-right: 1px solid rgba(255,255,255,.05); padding: 2rem; position: fixed; height: 100vh; }
+    .main-content { margin-left: var(--sidebar-w); flex: 1; padding: 3rem; }
+    
+    .sidebar-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; margin-bottom: 3rem; }
+    .nav-menu { list-style: none; }
+    .nav-menu li { margin-bottom: 1rem; }
+    .nav-menu a { color: var(--mid); text-decoration: none; font-size: .8rem; text-transform: uppercase; letter-spacing: .1em; transition: .3s; }
+    .nav-menu a:hover, .nav-menu a.active { color: var(--white); }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+    .stat-card { background: #111; padding: 2rem; border: 1px solid rgba(255,255,255,.05); }
+    .stat-label { font-size: .6rem; text-transform: uppercase; color: var(--mid); letter-spacing: .2em; }
+    .stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; }
+
+    .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .content-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; }
+    
+    .btn-primary { background: var(--white); color: var(--black); border: none; padding: .8rem 1.5rem; font-size: .7rem; font-weight: 600; text-transform: uppercase; cursor: pointer; }
+    
+    table { width: 100%; border-collapse: collapse; background: #111; }
+    th, td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,.05); }
+    th { font-size: .65rem; text-transform: uppercase; color: var(--mid); }
+    td { font-size: .8rem; }
+    
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: .6rem; text-transform: uppercase; font-weight: 600; }
+    .badge-pending { background: rgba(255, 193, 7, 0.1); color: #ffc107; }
+    .badge-completed { background: rgba(40, 167, 69, 0.1); color: #28a745; }
+
+    /* Modal Overlay Styles */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: none; align-items: center; justify-content: center; z-index: 2000; }
+    .modal-overlay.open { display: flex; }
+    .admin-modal { background: #111; padding: 2rem; width: 100%; max-width: 500px; border: 1px solid rgba(255,255,255,.1); }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-size: .7rem; color: var(--mid); margin-bottom: .5rem; text-transform: uppercase; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; background: #1a1a1a; border: 1px solid rgba(255,255,255,.1); padding: .7rem; color: #fff; outline: none; }
+    .img-preview { width: 80px; height: 80px; object-fit: cover; margin-top: .5rem; border: 1px solid rgba(255,255,255,.1); display: none; }
+    .upload-area { border: 2px dashed rgba(255,255,255,.1); padding: 1.5rem; text-align: center; cursor: pointer; transition: .3s; }
+    .upload-area:hover { border-color: var(--white); }
+    .upload-area input { display: none; }
+    .upload-area span { font-size: .75rem; color: var(--mid); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo">MAQAM ADMIN</div>
+        <ul class="nav-menu">
+            <li><a href="javascript:void(0)" onclick="showPanel('dashboard')" class="active">Dashboard</a></li>
+            <li><a href="javascript:void(0)" onclick="showPanel('products')">Inventory</a></li>
+            <li><a href="javascript:void(0)" onclick="showPanel('orders')">Orders</a></li>
+            <li><a href="{{ url_for('admin.logout') }}" style="color: var(--danger)">Logout</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <!-- Dashboard Panel -->
+        <div id="panel-dashboard" class="panel">
+            <div class="content-header"><h2>Overview</h2></div>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-label">Products</div><div class="stat-value">{{ product_count }}</div></div>
+                <div class="stat-card"><div class="stat-label">Pending Orders</div><div class="stat-value">{{ order_count }}</div></div>
+            </div>
+        </div>
+
+        <!-- Inventory Panel -->
+        <div id="panel-products" class="panel" style="display:none">
+            <div class="content-header">
+                <h2>Product Inventory</h2>
+                <button class="btn-primary" onclick="openProductModal()">Add Product</button>
+            </div>
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Action</th></tr>
+                </thead>
+                <tbody id="inventory-list">
+                    <!-- Products injected via JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Orders Panel -->
+        <div id="panel-orders" class="panel" style="display:none">
+            <div class="content-header"><h2>Recent Orders</h2></div>
+            <table>
+                <thead>
+                    <tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Status</th><th>Payment</th><th>Receipt</th><th>Date</th></tr>
+                </thead>
+                <tbody id="order-list">
+                    <!-- Orders injected via JS -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<!-- Add/Edit Product Modal -->
+<div id="product-modal" class="modal-overlay">
+    <div class="admin-modal">
+        <h3 id="modal-title-text" style="font-family: Bebas Neue; font-size: 1.5rem; margin-bottom: 1.5rem;">Add New Product</h3>
+        <form id="product-form" onsubmit="saveProduct(event)">
+            <input type="hidden" id="product-id">
+            <div class="form-group"><label>Product Name</label><input type="text" id="p-name" required></div>
+            <div class="form-group"><label>Category</label><input type="text" id="p-category" required></div>
+            <div class="form-group"><label>Price (EGP)</label><input type="number" id="p-price" required></div>
+            <div class="form-group"><label>Stock Quantity</label><input type="number" id="p-stock" placeholder="10" min="0"></div>
+            <div class="form-group"><label>Tag (e.g. New, Bestseller)</label><input type="text" id="p-tag" placeholder="New"></div>
+            <div class="form-group"><label>Sizes (comma separated)</label><input type="text" id="p-sizes" placeholder="S, M, L, XL"></div>
+            <div class="form-group"><label>Description</label><textarea id="p-desc"></textarea></div>
+            <div class="form-group">
+                <label>Product Image</label>
+                <div class="upload-area" onclick="document.getElementById('p-image-file').click()">
+                    <input type="file" id="p-image-file" accept="image/*" onchange="previewImage(this)">
+                    <span id="upload-label">Click to upload image</span>
+                </div>
+                <img id="img-preview" class="img-preview">
+                <input type="hidden" id="p-image">
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn-primary" style="flex: 1;">Save Product</button>
+                <button type="button" class="btn-primary" onclick="closeProductModal()" style="flex: 1; background: #333; color: #fff;">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function showPanel(id) {
+        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+        document.getElementById('panel-' + id).style.display = 'block';
+        document.querySelectorAll('.nav-menu a').forEach(a => a.classList.remove('active'));
+        event.target.classList.add('active');
+        if (id === 'products') fetchInventory();
+        if (id === 'orders') fetchOrders();
+    }
+
+    async function fetchInventory() {
+        const res = await fetch('/api/products');
+        const products = await res.json();
+        const list = document.getElementById('inventory-list');
+        list.innerHTML = products.map(p => `
+            <tr>
+                <td>${p.name}</td>
+                <td>${p.category}</td>
+                <td>EGP ${p.price.toLocaleString()}</td>
+                <td>${p.stock !== null ? p.stock : "-"}</td>
+                <td>
+                    <button onclick="editProduct(${JSON.stringify(p).replace(/"/g, '&quot;')})" style="background: none; border: none; color: var(--mid); cursor: pointer; margin-right: 10px;">Edit</button>
+                    <button onclick="deleteProduct(${p.id})" style="background: none; border: none; color: var(--danger); cursor: pointer;">Delete</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    async function fetchOrders() {
+        const res = await fetch('/api/orders');
+        const orders = await res.json();
+        const list = document.getElementById('order-list');
+        list.innerHTML = orders.map(o => `
+            <tr>
+                <td>#${o.id}</td>
+                <td>${o.customer_name || 'Anonymous'}</td>
+                <td>EGP ${o.total_amount.toLocaleString()}</td>
+                <td>
+                    <select onchange="updateOrderStatus(${o.id}, this.value)" style="background:#1a1a1a;border:1px solid rgba(255,255,255,.1);color:#fff;padding:4px 8px;font-size:.7rem;">
+                        <option value="Pending" ${o.status==='Pending'?'selected':''}>Pending</option>
+                        <option value="Confirmed" ${o.status==='Confirmed'?'selected':''}>Confirmed</option>
+                        <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Shipped</option>
+                        <option value="Cancelled" ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
+                    </select>
+                </td>
+                <td>${o.payment_method || 'N/A'}</td>
+                <td>${o.payment_receipt ? `<a href="${o.payment_receipt}" target="_blank" style="color:var(--mid);text-decoration:underline">View Receipt</a>` : 'N/A'}</td>
+                <td>${new Date(o.created_at).toLocaleDateString()}</td>
+            </tr>
+        `).join('');
+    }
+
+    async function updateOrderStatus(id, status) {
+        await fetch(`/api/orders/${id}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status })
+        });
+    }
+
+    function openProductModal() {
+        document.getElementById('product-form').reset();
+        document.getElementById('product-id').value = '';
+        document.getElementById('modal-title-text').textContent = 'Add New Product';
+        document.getElementById('product-modal').classList.add('open');
+    }
+
+    function editProduct(p) {
+        document.getElementById('product-id').value = p.id;
+        document.getElementById('p-name').value = p.name;
+        document.getElementById('p-category').value = p.category;
+        document.getElementById('p-price').value = p.price;
+        document.getElementById('p-stock').value = p.stock !== null ? p.stock : '';
+        document.getElementById('p-tag').value = p.tag || '';
+        document.getElementById('p-sizes').value = p.sizes || '';
+        document.getElementById('p-desc').value = p.description || '';
+        document.getElementById('modal-title-text').textContent = 'Edit Product';
+        document.getElementById('product-modal').classList.add('open');
+    }
+
+    function closeProductModal() {
+        document.getElementById('product-modal').classList.remove('open');
+    }
+
+    async function previewImage(input) {
+        if (!input.files[0]) return;
+        const preview = document.getElementById('img-preview');
+        document.getElementById('upload-label').textContent = input.files[0].name;
+        
+        // Upload immediately
+        const formData = new FormData();
+        formData.append('image', input.files[0]);
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.url) {
+            document.getElementById('p-image').value = data.url;
+            preview.src = data.url;
+            preview.style.display = 'block';
+        }
+    }
+
+    async function saveProduct(e) {
+        e.preventDefault();
+        const id = document.getElementById('product-id').value;
+        const stockVal = document.getElementById('p-stock').value;
+        const data = {
+            name: document.getElementById('p-name').value,
+            category: document.getElementById('p-category').value,
+            price: document.getElementById('p-price').value,
+            stock: stockVal !== '' ? parseInt(stockVal) : 10,
+            tag: document.getElementById('p-tag').value,
+            sizes: document.getElementById('p-sizes').value,
+            description: document.getElementById('p-desc').value,
+            image: document.getElementById('p-image').value
+        };
+
+        const url = id ? '/api/products/' + id : '/api/products';
+        const method = id ? 'PUT' : 'POST';
+
+        await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        closeProductModal();
+        fetchInventory();
+    }
+
+    async function deleteProduct(id) {
+        if (!confirm('Are you sure you want to delete this product?')) return;
+        await fetch('/api/products/' + id, { method: 'DELETE' });
+        fetchInventory();
+    }
+</script>
+{% endblock %}

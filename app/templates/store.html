@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{# Store uses its OWN nav/footer — disable global ones and remove page-wrapper padding #}
+{% block nav %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block head %}<style>.page-wrapper{padding-top:0!important}</style>{% endblock %}
+
+{% block content %}
+<div id="preloader">
+  <div class="preloader-text"></div>
+  <div class="preloader-line"></div>
+</div>
+
+<nav id="navbar">
+  <a href="/" class="logo">MAQAM</a>
+  <ul class="nav-links">
+    <li><a href="#collection">Collection</a></li>
+    <li><a href="#lookbook">Lookbook</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="javascript:void(0)" class="nav-icon" onclick="toggleWishlist()">Wishlist<span id="wish-count">0</span></a>
+    <a href="javascript:void(0)" class="nav-icon" onclick="toggleCart()">Bag<span id="cart-count">0</span></a>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <ul>
+    <li><a href="#collection" onclick="toggleMenu()">Collection</a></li>
+    <li><a href="#lookbook" onclick="toggleMenu()">Lookbook</a></li>
+    <li><a href="#about" onclick="toggleMenu()">About</a></li>
+    <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
+  </ul>
+</div>
+
+<section class="hero">
+  <div class="hero-bg-text">MAQAM</div>
+  <div class="hero-shapes">
+    <div class="float-shape shape-1"></div>
+    <div class="float-shape shape-2"></div>
+    <div class="float-shape shape-3"></div>
+    <div class="float-shape shape-4"></div>
+    <div class="float-shape shape-5"></div>
+    <div class="float-shape shape-6"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">SS 2025 Collection</div>
+    <h1 class="hero-title" id="hero-title">
+      <div class="title-line"><span class="char">D</span><span class="char">R</span><span class="char">E</span><span class="char">S</span><span class="char">S</span></div>
+      <div class="title-line"><span class="char">Y</span><span class="char">O</span><span class="char">U</span><span class="char">R</span></div>
+      <div class="title-line accent"><span class="char">T</span><span class="char">R</span><span class="char">U</span><span class="char">T</span><span class="char">H</span><span class="char">.</span></div>
+    </h1>
+    <a href="#collection" class="hero-cta" id="hero-cta">Explore Collection</a>
+  </div>
+  <div class="hero-line"><span>Scroll</span></div>
+</section>
+
+<div class="marquee-wrap"><div class="marquee-track">
+  <span class="marquee-item">MAQAM</span><span class="marquee-item">NEW COLLECTION</span><span class="marquee-item">BOLD BY DESIGN</span><span class="marquee-item">BLACK & WHITE</span>
+  <span class="marquee-item">MAQAM</span><span class="marquee-item">NEW COLLECTION</span><span class="marquee-item">BOLD BY DESIGN</span><span class="marquee-item">BLACK & WHITE</span>
+  <span class="marquee-item">MAQAM</span><span class="marquee-item">NEW COLLECTION</span><span class="marquee-item">BOLD BY DESIGN</span><span class="marquee-item">BLACK & WHITE</span>
+  <span class="marquee-item">MAQAM</span><span class="marquee-item">NEW COLLECTION</span><span class="marquee-item">BOLD BY DESIGN</span><span class="marquee-item">BLACK & WHITE</span>
+</div></div>
+
+<div class="countdown-section">
+  <div class="countdown-label">Next Drop In</div>
+  <div class="countdown-timer" id="countdown">
+    <div class="cd-unit"><span id="cd-days">00</span><small>Days</small></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span id="cd-hours">00</span><small>Hrs</small></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span id="cd-mins">00</span><small>Min</small></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span id="cd-secs">00</span><small>Sec</small></div>
+  </div>
+</div>
+
+<section id="collection">
+  <div class="collection-header reveal">
+    <div><div class="section-label">Shop</div><h2 class="collection-title">SS 2025 COLLECTION</h2></div>
+    <a href="javascript:void(0)" class="view-all" onclick="filterCategory('all')">View All</a>
+  </div>
+  <div class="category-tabs" id="category-tabs"></div>
+  <div class="product-grid" id="product-grid"></div>
+</section>
+
+<section id="lookbook">
+  <div class="section-label reveal">Lookbook</div>
+  <h2 class="lookbook-title word-reveal">SS 2025 EDITORIAL</h2>
+  <div class="lookbook-grid">
+    <div class="lookbook-item reveal"><img src="{{ url_for('static', filename='uploads/fashion_void_jacket_1777939248551.png') }}" alt="Lookbook" loading="lazy"/><div class="lookbook-label">Void Jacket</div></div>
+    <div class="lookbook-item reveal"><img src="{{ url_for('static', filename='uploads/fashion_shadow_trousers_1777939261094.png') }}" alt="Lookbook" loading="lazy"/><div class="lookbook-label">Shadow Trousers</div></div>
+    <div class="lookbook-item reveal"><img src="{{ url_for('static', filename='uploads/fashion_silhouette_tee_1777939275328.png') }}" alt="Lookbook" loading="lazy"/><div class="lookbook-label">Silhouette Tee</div></div>
+    <div class="lookbook-item reveal"><img src="{{ url_for('static', filename='uploads/fashion_contrast_coat_1777939292847.png') }}" alt="Lookbook" loading="lazy"/><div class="lookbook-label">Contrast Coat</div></div>
+  </div>
+</section>
+
+<section id="testimonials">
+  <div class="section-label reveal">What They Say</div>
+  <h2 class="testimonials-title word-reveal">CLIENT VOICES</h2>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal">
+      <div class="testimonial-quote">&ldquo;</div>
+      <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="testimonial-text">The quality is unmatched. Every MAQAM piece feels like it was designed specifically for me. Pure craftsmanship.</p>
+      <div class="testimonial-author">&mdash; Ahmed K., Cairo</div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="testimonial-quote">&ldquo;</div>
+      <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="testimonial-text">Bold, minimal, and perfectly crafted. This is what modern fashion should look like. I'm never going back.</p>
+      <div class="testimonial-author">&mdash; Sarah M., Dubai</div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="testimonial-quote">&ldquo;</div>
+      <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="testimonial-text">I've never received so many compliments. The Void Jacket is a masterpiece. MAQAM understands the assignment.</p>
+      <div class="testimonial-author">&mdash; Omar H., Alexandria</div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="section-label">Our Story</div>
+  <div class="about-grid">
+    <div class="reveal">
+      <h2 class="about-title">NOT JUST A BRAND.<br>A STATEMENT.</h2>
+      <p class="about-text">MAQAM was born from the belief that clothing is language. Every piece is a declaration — stripped of noise, built on contrast, and designed for those who move through the world with intention.</p>
+      <p class="about-text">Black and white. Two extremes that define everything in between. That tension is where MAQAM lives.</p>
+      <div class="about-stat-row">
+        <div><div class="about-stat-num">2021</div><div class="about-stat-label">Founded</div></div>
+        <div><div class="about-stat-num">100%</div><div class="about-stat-label">Independent</div></div>
+        <div><div class="about-stat-num">12</div><div class="about-stat-label">Collections</div></div>
+      </div>
+    </div>
+    <div class="about-visual reveal"><div class="about-visual-text">MQ</div><div class="about-visual-label">Designed in Cairo</div></div>
+  </div>
+</section>
+
+<section id="instagram">
+  <div class="insta-header"><h2 class="insta-title reveal">Follow The Movement</h2><p class="insta-handle reveal">@MAQAM</p></div>
+  <div class="insta-track">
+    <div class="insta-item"><img src="{{ url_for('static', filename='uploads/fashion_void_jacket_1777939248551.png') }}" alt="" loading="lazy"/></div>
+    <div class="insta-item"><img src="{{ url_for('static', filename='uploads/fashion_shadow_trousers_1777939261094.png') }}" alt="" loading="lazy"/></div>
+    <div class="insta-item"><img src="{{ url_for('static', filename='uploads/fashion_silhouette_tee_1777939275328.png') }}" alt="" loading="lazy"/></div>
+    <div class="insta-item"><img src="{{ url_for('static', filename='uploads/fashion_contrast_coat_1777939292847.png') }}" alt="" loading="lazy"/></div>
+    <div class="insta-item"><img src="{{ url_for('static', filename='uploads/fashion_void_jacket_1777939248551.png') }}" alt="" loading="lazy"/></div>
+    <div class="insta-item"><img src="{{ url_for('static', filename='uploads/fashion_shadow_trousers_1777939261094.png') }}" alt="" loading="lazy"/></div>
+    <div class="insta-item"><img src="{{ url_for('static', filename='uploads/fashion_silhouette_tee_1777939275328.png') }}" alt="" loading="lazy"/></div>
+    <div class="insta-item"><img src="{{ url_for('static', filename='uploads/fashion_contrast_coat_1777939292847.png') }}" alt="" loading="lazy"/></div>
+  </div>
+</section>
+
+<section id="newsletter">
+  <div class="newsletter-inner reveal">
+    <h2 class="newsletter-title">STAY IN THE LOOP</h2>
+    <p class="newsletter-text">Be the first to know about new drops and exclusive collections.</p>
+    <form class="newsletter-form" onsubmit="return false"><input type="email" id="newsletter-email" placeholder="Your email address"/><button onclick="subscribeNewsletter()">Subscribe</button></form>
+    <div class="newsletter-success" id="newsletter-success">You're in! Welcome to the movement.</div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-top">
+    <div class="reveal"><div class="section-label">Get In Touch</div><h2 class="contact-title">LET'S<br>TALK<br><span>MAQAM.</span></h2></div>
+    <form class="contact-form reveal" onsubmit="return false">
+      <div class="form-group"><input type="text" placeholder="Your Name"/></div>
+      <div class="form-group"><input type="email" placeholder="Email Address"/></div>
+      <div class="form-group"><textarea placeholder="Your Message"></textarea></div>
+      <button class="form-submit" onclick="handleSubmit(this)">Send Message</button>
+    </form>
+  </div>
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col"><div class="footer-logo">MAQAM</div><p class="footer-desc">Bold by design. Crafted for those who move with intention.</p></div>
+      <div class="footer-col"><div class="footer-heading">Shop</div><a href="#collection">New Arrivals</a><a href="#collection">Jackets</a><a href="#collection">T-Shirts</a><a href="#collection">Accessories</a></div>
+      <div class="footer-col"><div class="footer-heading">Company</div><a href="#about">About Us</a><a href="#contact">Contact</a><a href="/size-guide">Size Guide</a><a href="/shipping">Shipping & Returns</a></div>
+      <div class="footer-col"><div class="footer-heading">Follow</div><a href="#">Instagram</a><a href="#">TikTok</a><a href="#">WhatsApp</a></div>
+    </div>
+    <div class="footer-bottom"><div class="footer-copy">&copy; 2025 Maqam. All rights reserved.</div><div class="footer-legal"><a href="/shipping">Shipping</a><a href="/size-guide">Size Guide</a></div></div>
+  </footer>
+</section>
+
+<!-- Drawers -->
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-header"><h3>Your Bag</h3><button onclick="toggleCart()">Close</button></div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-total"><span>Total</span>: <span id="cart-total">EGP 0</span></div>
+    <button class="checkout-btn" onclick="checkout()">Checkout</button>
+    <button class="whatsapp-btn" onclick="whatsappCheckout()">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <span>Order via WhatsApp</span>
+    </button>
+  </div>
+</div>
+
+<div class="wishlist-drawer" id="wishlist-drawer">
+  <div class="cart-header"><h3>Wishlist</h3><button onclick="toggleWishlist()">Close</button></div>
+  <div class="cart-items" id="wishlist-items"></div>
+</div>
+
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeAllDrawers()"></div>
+
+<!-- Product Modal -->
+<div class="modal-wrap" id="product-modal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="modal-grid">
+      <div class="modal-img-wrap" id="modal-img-wrap"><img id="modal-img" src="" alt="Product"/></div>
+      <div class="modal-info">
+        <h2 id="modal-title"></h2>
+        <p class="modal-price-text" id="modal-price"></p>
+        <div class="modal-desc">Premium fabric, made to last. Designed for the modern statement.</div>
+        <div class="size-selector">
+          <div class="size-label">Select Size &nbsp;<a href="/size-guide" target="_blank" style="font-size:.55rem;color:var(--mid);letter-spacing:.1em;text-transform:uppercase;text-decoration:underline">Size Guide</a></div>
+          <div class="size-options" id="modal-sizes"></div>
+          <div class="size-warning" id="size-warning">Please select a size</div>
+        </div>
+        <button class="modal-add-btn" id="modal-add-btn">Add to Bag</button>
+        <button class="modal-wishlist-btn" id="modal-wish-btn">&#9825; Add to Wishlist</button>
+        <div style="margin-top:1rem;font-size:.6rem;color:#555;letter-spacing:.1em">
+          <a href="/shipping" target="_blank" style="color:#555;text-decoration:underline">Shipping & Returns</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Countdown Timer
+const DROP_DATE = new Date(Date.now() + 14 * 86400000);
+function updateCountdown() {
+  const diff = DROP_DATE.getTime() - Date.now();
+  if (diff <= 0) return;
+  document.getElementById('cd-days').textContent = String(Math.floor(diff / 86400000)).padStart(2, '0');
+  document.getElementById('cd-hours').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+  document.getElementById('cd-mins').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+  document.getElementById('cd-secs').textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+}
+updateCountdown(); setInterval(updateCountdown, 1000);
+
+// Newsletter
+function subscribeNewsletter() {
+  const input = document.getElementById('newsletter-email');
+  if (!input.value.trim() || !input.value.includes('@')) { input.style.borderColor = '#ff4444'; return; }
+  input.value = '';
+  document.getElementById('newsletter-success').classList.add('show');
+  setTimeout(() => document.getElementById('newsletter-success').classList.remove('show'), 4000);
+}
+
+// Contact Form
+function handleSubmit(btn) {
+  const form = btn.closest('form');
+  const inputs = form.querySelectorAll('input,textarea');
+  let ok = true;
+  inputs.forEach(i => { if (!i.value.trim()) { i.style.borderColor = '#ff4444'; ok = false; } else i.style.borderColor = ''; });
+  if (!ok) return;
+  btn.textContent = 'Sending...'; btn.disabled = true;
+  setTimeout(() => { btn.textContent = 'Message Sent ✓'; btn.style.background = '#333'; form.reset(); setTimeout(() => { btn.textContent = 'Send Message'; btn.style.background = ''; btn.disabled = false; }, 3000); }, 1000);
+}
+
+// Dynamic Category Tabs
+function buildCategoryTabs() {
+  const cats = ['All', ...new Set(PRODUCTS_CACHE.map(p => p.category).filter(Boolean))];
+  document.getElementById('category-tabs').innerHTML = cats.map(c =>
+    `<button class="cat-tab${c.toLowerCase() === currentFilter ? ' active' : ''}" onclick="filterCategory('${c}')">${c}</button>`
+  ).join('');
+}
+
+// Override fetch to also build tabs
+const _origFetch = window.fetch;
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => { if (PRODUCTS_CACHE.length) buildCategoryTabs(); }, 1500);
+});
+</script>
+{% endblock %}

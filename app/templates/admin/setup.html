@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}MAQAM | Admin Setup{% endblock %}
+
+{% block head %}
+<style>
+    .auth-container { height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--black); }
+    .auth-box { background: #111; padding: 3rem; border: 1px solid rgba(255,255,255,.08); width: 100%; max-width: 400px; text-align: center; }
+    .auth-box h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; margin-bottom: 2rem; }
+    .form-group { margin-bottom: 1.5rem; text-align: left; }
+    .form-group label { display: block; font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; margin-bottom: .5rem; color: var(--mid); }
+    .form-group input { width: 100%; background: #1a1a1a; border: 1px solid rgba(255,255,255,.1); padding: .8rem; color: #fff; outline: none; }
+    .btn-auth { width: 100%; background: var(--white); color: var(--black); padding: 1rem; border: none; font-family: 'Barlow', sans-serif; font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .2em; cursor: pointer; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>Admin Setup</h2>
+        <p style="color: var(--mid); margin-bottom: 2rem; font-size: .8rem;">Create your admin password to get started.</p>
+        <form method="POST">
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" class="btn-auth">Create Account</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

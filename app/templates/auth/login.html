@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}MAQAM | Login{% endblock %}
+
+{% block head %}
+<style>
+    body { background: #050505; color: #fff; }
+    .auth-wrap { max-width: 420px; margin: 6rem auto; padding: 0 1.5rem; }
+    .auth-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; margin-bottom: .5rem; }
+    .auth-sub { color: #666; font-size: .75rem; letter-spacing: .1em; margin-bottom: 2.5rem; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-size: .65rem; text-transform: uppercase; letter-spacing: .15em; color: #888; margin-bottom: .5rem; }
+    .form-group input { width: 100%; background: #111; border: 1px solid rgba(255,255,255,.08); padding: .8rem 1rem; color: #fff; outline: none; font-size: .85rem; transition: border .3s; box-sizing: border-box; }
+    .form-group input:focus { border-color: rgba(255,255,255,.3); }
+    .btn-submit { width: 100%; background: #fff; color: #000; border: none; padding: 1rem; font-size: .7rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; margin-top: .5rem; transition: background .3s; }
+    .btn-submit:hover { background: #ddd; }
+    .auth-link { margin-top: 1.5rem; text-align: center; font-size: .75rem; color: #666; }
+    .auth-link a { color: #fff; text-decoration: underline; }
+    .flash-error { background: rgba(220,53,69,.1); border: 1px solid rgba(220,53,69,.3); color: #dc3545; padding: .8rem 1rem; font-size: .75rem; margin-bottom: 1.5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="auth-title">Welcome Back</div>
+    <div class="auth-sub">Sign in to your MAQAM account</div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <form method="POST">
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" required autofocus>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" required>
+        </div>
+        <button type="submit" class="btn-submit">Sign In</button>
+    </form>
+    <div class="auth-link">Don't have an account? <a href="{{ url_for('auth.register') }}">Create one</a></div>
+</div>
+{% endblock %}

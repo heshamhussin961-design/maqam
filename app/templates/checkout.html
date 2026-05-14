@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}MAQAM | Checkout{% endblock %}
+{% block head %}
+<style>
+.checkout-page{min-height:calc(100vh - 80px);padding:3rem 3rem 4rem;max-width:900px;margin:0 auto}
+.checkout-page h1{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.1em;margin-bottom:3rem}
+.checkout-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem}
+.checkout-form .form-group{margin-bottom:1.5rem}
+.checkout-form label{display:block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:.5rem}
+.checkout-form input,.checkout-form textarea{width:100%;background:#111;border:1px solid rgba(255,255,255,.1);color:#fff;padding:.9rem;font-family:'Barlow',sans-serif;font-size:.9rem;outline:none;transition:border .3s}
+.checkout-form input:focus,.checkout-form textarea:focus{border-color:var(--white)}
+.checkout-form textarea{height:80px;resize:none}
+.order-summary{background:#111;padding:2rem;border:1px solid rgba(255,255,255,.05)}
+.order-summary h3{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;margin-bottom:1.5rem;letter-spacing:.1em}
+.summary-item{display:flex;justify-content:space-between;padding:.8rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem}
+.summary-total{display:flex;justify-content:space-between;padding:1.2rem 0;font-size:1.1rem;font-weight:500;border-top:1px solid rgba(255,255,255,.1);margin-top:.5rem}
+.place-order-btn{width:100%;background:var(--white);color:var(--black);border:none;padding:1.2rem;font-family:'Barlow',sans-serif;font-size:.75rem;font-weight:600;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;margin-top:1.5rem;transition:.3s}
+.place-order-btn:hover{background:var(--mid)}
+.place-order-btn:disabled{opacity:.5;cursor:not-allowed}
+.back-link{color:var(--mid);font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;display:inline-block;margin-bottom:2rem;transition:color .3s}
+.back-link:hover{color:var(--white)}
+@media(max-width:768px){.checkout-grid{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+{% block content %}
+<div class="checkout-page">
+  <h1>CHECKOUT</h1>
+  <div class="checkout-grid">
+    <div class="checkout-form">
+      <h3>Shipping Details</h3>
+      <div class="form-group"><label>Full Name *</label><input type="text" id="c-name" required></div>
+      <div class="form-group"><label>Phone Number *</label><input type="tel" id="c-phone" required></div>
+      <div class="form-group"><label>Delivery Address *</label><textarea id="c-address" required></textarea></div>
+      <div class="form-group"><label>Notes (optional)</label><input type="text" id="c-notes" placeholder="Any special instructions"></div>
+      
+      <h3 style="margin-top:2rem;margin-bottom:1rem;font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.1em">Payment Method</h3>
+      <div class="form-group" style="display:flex;gap:2rem;margin-bottom:1rem">
+        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer">
+          <input type="radio" name="payment_method" value="Vodafone Cash" onchange="updatePaymentInfo()" checked> Vodafone Cash
+        </label>
+        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer">
+          <input type="radio" name="payment_method" value="InstaPay" onchange="updatePaymentInfo()"> InstaPay
+        </label>
+      </div>
+
+      <div id="payment-instructions" style="background:rgba(255,255,255,0.05);padding:1.5rem;border-left:3px solid var(--white);margin-bottom:1.5rem;font-size:0.85rem;line-height:1.6">
+        <!-- populated by JS -->
+      </div>
+
+      <div class="form-group">
+        <label>Upload Payment Receipt (Screenshot) *</label>
+        <input type="file" id="c-receipt" accept="image/*" required style="padding:0.5rem;background:transparent;border:1px dashed rgba(255,255,255,0.3)">
+      </div>
+    </div>
+    <div>
+      <div class="order-summary">
+        <h3>Order Summary</h3>
+        <div id="summary-items"></div>
+        <div class="summary-total"><span>Total</span><span id="summary-total">EGP 0</span></div>
+      </div>
+      <button class="place-order-btn" id="place-order-btn" onclick="placeOrder()">Place Order</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const cart = JSON.parse(sessionStorage.getItem('maqam_checkout_cart') || '[]');
+if (cart.length === 0) window.location.href = '/';
+
+const VODAFONE_CASH_NUMBER = '010XXXXXXXX'; // UPDATE THIS
+const INSTAPAY_HANDLE = 'maqam@instapay'; // UPDATE THIS
+
+function updatePaymentInfo() {
+  const method = document.querySelector('input[name="payment_method"]:checked').value;
+  const instDiv = document.getElementById('payment-instructions');
+  const total = document.getElementById('summary-total').textContent;
+  
+  if (method === 'Vodafone Cash') {
+    instDiv.innerHTML = `Please transfer <strong>${total}</strong> to our Vodafone Cash number:<br><br>
+    <strong style="font-size:1.2rem;letter-spacing:0.1em;color:white">${VODAFONE_CASH_NUMBER}</strong><br><br>
+    After transferring, take a screenshot of the successful transaction and upload it below.`;
+  } else {
+    instDiv.innerHTML = `Please transfer <strong>${total}</strong> to our InstaPay handle:<br><br>
+    <strong style="font-size:1.2rem;letter-spacing:0.1em;color:white">${INSTAPAY_HANDLE}</strong><br><br>
+    After transferring, take a screenshot of the successful transaction and upload it below.`;
+  }
+}
+
+document.getElementById('summary-items').innerHTML = cart.map(i =>
+  `<div class="summary-item"><span>${i.name} (${i.size}) x${i.qty}</span><span>EGP ${(i.price * i.qty).toLocaleString()}</span></div>`
+).join('');
+document.getElementById('summary-total').textContent = 'EGP ' + cart.reduce((a, i) => a + i.price * i.qty, 0).toLocaleString();
+
+// Initialize instructions
+updatePaymentInfo();
+
+async function placeOrder() {
+  const name = document.getElementById('c-name').value.trim();
+  const phone = document.getElementById('c-phone').value.trim();
+  const address = document.getElementById('c-address').value.trim();
+  const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+  const receiptInput = document.getElementById('c-receipt');
+  
+  if (!name || !phone || !address) { alert('Please fill all required shipping fields'); return; }
+  if (receiptInput.files.length === 0) { alert('Please upload your payment receipt screenshot'); return; }
+
+  const btn = document.getElementById('place-order-btn');
+  btn.disabled = true; btn.textContent = 'Uploading Receipt...';
+
+  try {
+    // 1. Upload receipt
+    const formData = new FormData();
+    formData.append('image', receiptInput.files[0]);
+    
+    const uploadRes = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (!uploadRes.ok) throw new Error('Receipt upload failed');
+    const uploadData = await uploadRes.json();
+    const receiptUrl = uploadData.url;
+
+    // 2. Place Order
+    btn.textContent = 'Processing Order...';
+    const res = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        customer_name: name, customer_phone: phone, customer_address: address,
+        payment_method: paymentMethod, payment_receipt: receiptUrl,
+        items: cart.map(i => ({ name: i.name, price: i.price, quantity: i.qty, size: i.size }))
+      })
+    });
+    
+    if (!res.ok) throw new Error('Order creation failed');
+    const order = await res.json();
+    
+    sessionStorage.removeItem('maqam_checkout_cart');
+    sessionStorage.setItem('maqam_last_order', JSON.stringify(order));
+    
+    // Clear global cart too if it exists
+    localStorage.removeItem('maqam_cart');
+    
+    window.location.href = '/order-confirmed';
+  } catch (e) { 
+    console.error(e);
+    btn.disabled = false; 
+    btn.textContent = 'Place Order'; 
+    alert('Order failed: ' + e.message + '. Please try again.'); 
+  }
+}
+</script>
+{% endblock %}

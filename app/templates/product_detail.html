@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block title %}MAQAM | {{ product.name }}{% endblock %}
+
+{% block head %}
+<style>
+/* Product Detail Page Specific Styles */
+.prod-detail-wrap {
+    max-width: 1400px;
+    margin: 4rem auto;
+    padding: 0 5%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+.prod-img-box {
+    position: sticky;
+    top: 100px;
+    background: #050505;
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.prod-img-box img {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    object-fit: cover;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
+}
+
+.prod-info-box {
+    padding-top: 2rem;
+}
+
+.prod-category {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 1rem;
+}
+
+.prod-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    color: var(--white);
+}
+
+.prod-price {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-bottom: 2rem;
+    color: var(--white);
+}
+
+.prod-stock-status {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+}
+
+.prod-stock-status.in-stock {
+    color: #4CAF50;
+    border-color: rgba(76, 175, 80, 0.3);
+}
+
+.prod-stock-status.out-of-stock {
+    color: #F44336;
+    border-color: rgba(244, 67, 54, 0.3);
+}
+
+.prod-desc {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--mid);
+    margin-bottom: 3rem;
+}
+
+.prod-sizes-wrap {
+    margin-bottom: 3rem;
+}
+
+.prod-sizes-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.prod-sizes-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white);
+}
+
+.prod-size-guide-link {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mid);
+    text-decoration: underline;
+}
+
+.prod-sizes {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.prod-size-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--white);
+    padding: 0.8rem 1.5rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.prod-size-btn:hover {
+    border-color: var(--white);
+}
+
+.prod-size-btn.selected {
+    background: var(--white);
+    color: var(--black);
+    border-color: var(--white);
+}
+
+.prod-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.prod-add-btn {
+    flex: 1;
+    background: var(--white);
+    color: var(--black);
+    border: none;
+    padding: 1.2rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.prod-add-btn:hover:not(:disabled) {
+    background: var(--mid);
+    color: var(--white);
+}
+
+.prod-add-btn:disabled {
+    background: #333;
+    color: #666;
+    cursor: not-allowed;
+}
+
+/* Related Products */
+.related-section {
+    max-width: 1400px;
+    margin: 6rem auto;
+    padding: 0 5%;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 4rem;
+}
+
+.related-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.rel-card {
+    background: #050505;
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s, border-color 0.3s;
+    text-decoration: none;
+    display: block;
+}
+
+.rel-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.rel-img {
+    width: 100%;
+    height: 250px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+}
+
+.rel-name {
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+}
+
+.rel-price {
+    font-size: 0.8rem;
+    color: var(--mid);
+}
+
+@media(max-width: 900px) {
+    .prod-detail-wrap {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin: 2rem auto;
+    }
+    .prod-img-box {
+        position: relative;
+        top: 0;
+    }
+    .prod-title {
+        font-size: 3rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="prod-detail-wrap reveal">
+    <div class="prod-img-box">
+        <img src="{{ product.image }}" alt="{{ product.name }}">
+    </div>
+    <div class="prod-info-box">
+        {% if product.category %}
+        <div class="prod-category">{{ product.category }}</div>
+        {% endif %}
+        <h1 class="prod-title">{{ product.name }}</h1>
+        <div class="prod-price">EGP {{ "{:,.2f}".format(product.price) }}</div>
+        
+        <div class="prod-stock-status {% if product.stock and product.stock > 0 %}in-stock{% else %}out-of-stock{% endif %}">
+            {% if product.stock and product.stock > 0 %}
+                In Stock ({{ product.stock }} available)
+            {% else %}
+                Out of Stock
+            {% endif %}
+        </div>
+
+        <div class="prod-desc">
+            {{ product.description or "Premium fabric, made to last. Designed for the modern statement. Bold by design, crafted for those who move with intention." }}
+        </div>
+
+        {% if product.sizes %}
+        <div class="prod-sizes-wrap">
+            <div class="prod-sizes-head">
+                <span class="prod-sizes-label">Select Size</span>
+                <a href="/size-guide" class="prod-size-guide-link">Size Guide</a>
+            </div>
+            <div class="prod-sizes" id="page-size-options">
+                {% for size in product.sizes.split(',') %}
+                <button class="prod-size-btn" onclick="selectPageSize(this, '{{ size.strip() }}')">{{ size.strip() }}</button>
+                {% endfor %}
+            </div>
+            <div id="page-size-warning" style="display:none; color:#F44336; font-size:0.7rem; margin-top:0.5rem; letter-spacing:0.1em; text-transform:uppercase;">Please select a size</div>
+        </div>
+        {% endif %}
+
+        <div class="prod-actions">
+            <button class="prod-add-btn" id="page-add-btn" 
+                    {% if not product.stock or product.stock <= 0 %}disabled{% endif %}
+                    onclick="addToBagPage()">
+                {% if not product.stock or product.stock <= 0 %}Out of Stock{% else %}Add to Bag{% endif %}
+            </button>
+        </div>
+    </div>
+</div>
+
+{% if related %}
+<div class="related-section reveal">
+    <h2 class="related-title">Complete The Look</h2>
+    <div class="related-grid">
+        {% for rel in related %}
+        <a href="/product/{{ rel.slug }}" class="rel-card">
+            <img src="{{ rel.image }}" alt="{{ rel.name }}" class="rel-img">
+            <div class="rel-name">{{ rel.name }}</div>
+            <div class="rel-price">EGP {{ "{:,.2f}".format(rel.price) }}</div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+let selectedSize = null;
+const productData = {
+    id: {{ product.id }},
+    name: "{{ product.name }}",
+    price: {{ product.price }},
+    image: "{{ product.image }}",
+    stock: {{ product.stock or 0 }}
+};
+
+function selectPageSize(btn, size) {
+    document.querySelectorAll('.prod-size-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedSize = size;
+    document.getElementById('page-size-warning').style.display = 'none';
+}
+
+function addToBagPage() {
+    if (productData.stock <= 0) return;
+    
+    // Check if sizes are required
+    const hasSizes = document.querySelectorAll('.prod-size-btn').length > 0;
+    if (hasSizes && !selectedSize) {
+        document.getElementById('page-size-warning').style.display = 'block';
+        return;
+    }
+
+    const item = {
+        id: productData.id,
+        name: productData.name,
+        price: productData.price,
+        image: productData.image,
+        size: selectedSize || 'One Size',
+        quantity: 1
+    };
+
+    // Use global addToBag logic if available (from main.js)
+    if (typeof window.addToBag === 'function') {
+        window.addToBag(productData.name, productData.price, selectedSize || 'One Size', productData.image);
+    } else {
+        // Fallback localstorage logic
+        let cart = JSON.parse(localStorage.getItem('maqam_cart') || '[]');
+        const ext = cart.find(i => i.name === productData.name && i.size === (selectedSize || 'One Size'));
+        if (ext) ext.qty++;
+        else cart.push({ name: productData.name, price: productData.price, size: selectedSize || 'One Size', image: productData.image, qty: 1 });
+        localStorage.setItem('maqam_cart', JSON.stringify(cart));
+        if (typeof showToast === 'function') showToast('Added to bag');
+        if (typeof updateCartCount === 'function') updateCartCount();
+    }
+}
+</script>
+{% endblock %}

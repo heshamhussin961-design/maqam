@@ -1,0 +1,15 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+app.db
+venv/
+.venv/
+app/static/uploads/
+templates/
+.agent/
+3d-web/
+Untitled-1.txt
+check_routes.py
+migrate_db.py
+migrate_order.py
