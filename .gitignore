@@ -5,8 +5,8 @@ __pycache__/
 app.db
 venv/
 .venv/
-app/static/uploads/
-templates/
+# app/static/uploads/ — tracked for default lookbook images
+/templates/
 .agent/
 3d-web/
 Untitled-1.txt

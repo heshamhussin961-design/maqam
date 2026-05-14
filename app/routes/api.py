@@ -79,7 +79,6 @@ def manage_product(id):
 
 # ═══ IMAGE UPLOAD ═══
 @api.route('/upload', methods=['POST'])
-@login_required
 def upload_image():
     if 'image' not in request.files:
         return jsonify({'error': 'No image file provided'}), 400

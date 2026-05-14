@@ -68,8 +68,9 @@
 const cart = JSON.parse(sessionStorage.getItem('maqam_checkout_cart') || '[]');
 if (cart.length === 0) window.location.href = '/';
 
-const VODAFONE_CASH_NUMBER = '010XXXXXXXX'; // UPDATE THIS
-const INSTAPAY_HANDLE = 'maqam@instapay'; // UPDATE THIS
+const VODAFONE_CASH_NUMBER = '01030503014';
+const INSTAPAY_LINK = 'https://ipn.eg/S/sherifelsherif17/instapay/0ZQuJO';
+const INSTAPAY_HANDLE = 'sherifelsherif17@instapay';
 
 function updatePaymentInfo() {
   const method = document.querySelector('input[name="payment_method"]:checked').value;
@@ -81,8 +82,8 @@ function updatePaymentInfo() {
     <strong style="font-size:1.2rem;letter-spacing:0.1em;color:white">${VODAFONE_CASH_NUMBER}</strong><br><br>
     After transferring, take a screenshot of the successful transaction and upload it below.`;
   } else {
-    instDiv.innerHTML = `Please transfer <strong>${total}</strong> to our InstaPay handle:<br><br>
-    <strong style="font-size:1.2rem;letter-spacing:0.1em;color:white">${INSTAPAY_HANDLE}</strong><br><br>
+    instDiv.innerHTML = `Please transfer <strong>${total}</strong> via InstaPay:<br><br>
+    <a href="${INSTAPAY_LINK}" target="_blank" style="font-size:1.1rem;letter-spacing:0.1em;color:white;text-decoration:underline">${INSTAPAY_HANDLE}</a><br><br>
     After transferring, take a screenshot of the successful transaction and upload it below.`;
   }
 }
