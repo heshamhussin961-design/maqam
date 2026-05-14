@@ -109,8 +109,10 @@ def get_orders():
 @api.route('/orders', methods=['POST'])
 def create_order():
     data = request.json
+    if not data:
+        return jsonify({'error': 'Invalid request body'}), 400
     items_data = data.get('items', [])
-    
+
     if not items_data:
         return jsonify({'error': 'Order must contain at least one item.'}), 400
 

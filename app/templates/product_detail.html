@@ -321,7 +321,7 @@ const productData = {
     id: {{ product.id }},
     name: "{{ product.name }}",
     price: {{ product.price }},
-    image: "{{ product.image }}",
+    image: "{{ product.image or '' }}",
     stock: {{ product.stock or 0 }}
 };
 
